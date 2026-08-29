@@ -9,8 +9,13 @@
 <body>
     <div class="admin-container">
         <header class="admin-header">
-            <h1>☕ Админ-панель DAM Coffee</h1>
-            <p class="subtitle">Управление каталогом магазина</p>
+            <div>
+                <h1>☕ Админ-панель DAM Coffee</h1>
+                <p class="subtitle">Управление каталогом магазина</p>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='index.html'" style="margin-top: 16px; width: 100%; max-width: 250px;">
+                ← Вернуться в магазин
+            </button>
         </header>
 
         <div id="alertContainer"></div>
@@ -24,7 +29,7 @@
                     <div class="stat-label">Товаров в магазине</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value" id="statAvgPrice">0 </div>
+                    <div class="stat-value" id="statAvgPrice">0 ₴</div>
                     <div class="stat-label">Средняя цена</div>
                 </div>
                 <div class="stat-card">
@@ -56,7 +61,7 @@
 
         <!-- Предпросмотр -->
         <div class="section hidden" id="previewSection">
-            <h2 class="section-title"> Найдено товаров: <span id="productsCount">0</span></h2>
+            <h2 class="section-title">📦 Найдено товаров: <span id="productsCount">0</span></h2>
             
             <div class="stats-grid">
                 <div class="stat-card">
@@ -73,7 +78,7 @@
 
             <div class="button-group">
                 <button class="btn btn-success" onclick="saveToStore()">💾 Сохранить в магазин</button>
-                <button class="btn btn-outline" onclick="exportJSON()"> Экспорт JSON</button>
+                <button class="btn btn-outline" onclick="exportJSON()">📥 Экспорт JSON</button>
             </div>
         </div>
 
