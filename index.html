@@ -43,7 +43,7 @@
             </div>
 
             <div class="container">
-                <h2 id="catalogTitle">Популярное</h2>
+                <h2 id="catalogTitle" class="popular">Популярное</h2>
                 <div class="products-grid" id="productsGrid"></div>
                 <div id="noResults" class="hidden" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
                     <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">🔍</div>
@@ -132,30 +132,51 @@
         </div>
 
         <div id="view-profile" class="view-section hidden animate-fade" style="padding: 16px; text-align: center; padding-top: 40px;">
-            <!-- Состояние: Гость (почти никогда не покажется из-за авто-входа) -->
+            <!-- Состояние: Гость -->
             <div id="guestView" class="hidden">
                 <div style="width: 80px; height: 80px; background: var(--bg-secondary); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px;">👤</div>
                 <h2>Гость</h2>
                 <p class="text-secondary" style="margin-bottom: 32px;">Откройте это приложение внутри Telegram для автоматического входа</p>
             </div>
 
-            <!-- Состояние: Авторизован (показывается СРАЗУ) -->
+            <!-- Состояние: Авторизован -->
             <div id="userView">
                 <img id="userAvatar" src="" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; object-fit: cover; border: 2px solid var(--accent);">
                 <h2 id="userName">Загрузка...</h2>
-                <p class="text-secondary" style="margin-bottom: 32px;">ID: <span id="userId">...</span></p>
+                <p class="text-secondary" style="margin-bottom: 24px;">ID: <span id="userId">...</span></p>
                 
-                <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
-                    <button class="btn btn-outline">📦 История заказов</button>
-                    <button class="btn btn-outline">⚙️ Настройки</button>
+                <div style="text-align: left; max-width: 400px; margin: 0 auto;">
+                    <h3 style="margin-bottom: 12px; font-size: 15px; color: var(--text-secondary); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Последние заказы</h3>
                     
-                    <!-- СЕКРЕТНАЯ КНОПКА АДМИНА (появится только у тебя) -->
-                    <button id="adminBtn" class="btn btn-danger hidden" onclick="openAdminPanel()" style="margin-top: 20px;">
+                    <!-- Сюда JavaScript вставит 3 последних заказа -->
+                    <div id="recentOrdersList" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                        <!-- Заполняется динамически -->
+                    </div>
+                    
+                    <button class="btn btn-outline" onclick="showAllOrders()" style="margin-bottom: 24px;">📦 Все заказы</button>
+                    
+                    <!-- СЕКРЕТНАЯ КНОПКА АДМИНА -->
+                    <button id="adminBtn" class="btn btn-danger hidden" onclick="openAdminPanel()">
                         🔐 Панель администратора
                     </button>
-                    
-                    <button class="btn btn-outline" onclick="logoutTelegram()" style="margin-top: 12px; color: var(--danger); border-color: var(--danger);">Выйти из аккаунта</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Экран: Все заказы -->
+        <div id="view-all-orders" class="view-section hidden animate-fade" style="padding: 16px;">
+            <div style="display: flex; align-items: center; margin-bottom: 24px;">
+                <button class="btn btn-outline" onclick="showProfileFromOrders()" style="width: auto; padding: 8px 16px; margin-right: 12px; font-size: 14px;">← Назад</button>
+                <h2 style="margin: 0;">Все заказы</h2>
+            </div>
+            
+            <div id="allOrdersList"></div>
+            
+            <div id="emptyOrdersState" class="hidden" style="text-align: center; padding: 40px 20px; color: var(--text-secondary);">
+                <div style="font-size: 48px; margin-bottom: 16px; opacity: 0.3;">📦</div>
+                <h3>История заказов пуста</h3>
+                <p>Ваши оформленные заказы появятся здесь</p>
+                <button class="btn btn-primary" onclick="showView('home')" style="margin-top: 20px; max-width: 250px;">Перейти к покупкам</button>
             </div>
         </div>
     </main>
@@ -168,21 +189,88 @@
                 <div>
                     <div class="product-category" id="detailCategory"></div>
                     <h1 id="detailTitle"></h1>
+                    <div id="detailOrigin" style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;"></div>
                 </div>
                 <div class="detail-price" id="detailPrice"></div>
             </div>
+            
+            <!-- Бейджи: обработка, теги -->
+            <div id="detailBadges" style="display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0;"></div>
+            
             <p class="text-secondary" id="detailDescription" style="font-size: 15px; line-height: 1.6; margin-bottom: 24px;"></p>
-            <div class="detail-specs">
-                <div class="spec-item"><span class="spec-label">Происхождение</span><span class="spec-value" id="detailOrigin"></span></div>
-                <div class="spec-item"><span class="spec-label">Обжарка</span><span class="spec-value" id="detailRoast"></span></div>
-                <div class="spec-item"><span class="spec-label">Вкусовой профиль</span><span class="spec-value" id="detailFlavor"></span></div>
-                <div class="spec-item"><span class="spec-label">Вес</span><span class="spec-value" id="detailWeight"></span></div>
+            
+            <!-- Вкусовой профиль -->
+            <div class="taste-section">
+                <h3 style="margin-bottom: 16px;">Вкусовой профиль</h3>
+                <div class="taste-bars">
+                    <div class="taste-bar-item">
+                        <div class="taste-bar-label">
+                            <span>Кислотность</span>
+                            <span id="acidityValue">0/5</span>
+                        </div>
+                        <div class="taste-bar-track">
+                            <div class="taste-bar-fill" id="acidityBar"></div>
+                        </div>
+                    </div>
+                    <div class="taste-bar-item">
+                        <div class="taste-bar-label">
+                            <span>Сладость</span>
+                            <span id="sweetnessValue">0/5</span>
+                        </div>
+                        <div class="taste-bar-track">
+                            <div class="taste-bar-fill" id="sweetnessBar"></div>
+                        </div>
+                    </div>
+                    <div class="taste-bar-item">
+                        <div class="taste-bar-label">
+                            <span>Плотность</span>
+                            <span id="bodyValue">0/5</span>
+                        </div>
+                        <div class="taste-bar-track">
+                            <div class="taste-bar-fill" id="bodyBar"></div>
+                        </div>
+                    </div>
+                </div>
             </div>
+            
+            <!-- Вкусовые ноты -->
+            <div class="flavor-notes-section">
+                <h3 style="margin-bottom: 12px;">Вкусовые ноты</h3>
+                <div class="flavor-tags" id="detailFlavorTags"></div>
+            </div>
+            
+            <!-- Рекомендации по завариванию -->
+            <div class="brewing-section">
+                <h3 style="margin-bottom: 12px;">Рекомендации по завариванию</h3>
+                <div class="brewing-methods" id="detailBrewing"></div>
+            </div>
+            
+            <!-- Характеристики -->
+            <div class="detail-specs">
+                <div class="spec-item">
+                    <span class="spec-label">Обжарка</span>
+                    <span class="spec-value" id="detailRoast"></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Обработка</span>
+                    <span class="spec-value" id="detailProcessing"></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Вес</span>
+                    <span class="spec-value" id="detailWeight"></span>
+                </div>
+                <div class="spec-item">
+                    <span class="spec-label">Категория</span>
+                    <span class="spec-value" id="detailCategorySpec"></span>
+                </div>
+            </div>
+
             <div class="quantity-control">
                 <button class="qty-btn" onclick="changeDetailQty(-1)">−</button>
                 <span class="qty-value" id="detailQty">1</span>
                 <button class="qty-btn" onclick="changeDetailQty(1)">+</button>
             </div>
+
             <button class="btn btn-primary" id="detailAddBtn" onclick="addDetailToCart()">Добавить в корзину</button>
         </div>
     </div>
