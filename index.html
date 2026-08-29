@@ -131,11 +131,35 @@
             </div>
         </div>
 
-        <div id="view-profile" class="view-section hidden animate-fade" style="padding: 16px; text-align: center; padding-top: 60px;">
-            <div style="width: 80px; height: 80px; background: var(--bg-secondary); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px;">👤</div>
-            <h2>Гость</h2>
-            <p class="text-secondary" style="margin-bottom: 32px;">Войдите в аккаунт, чтобы сохранять историю заказов</p>
-            <button class="btn btn-outline" style="max-width: 300px; margin: 0 auto;">Войти через Telegram</button>
+        <div id="view-profile" class="view-section hidden animate-fade" style="padding: 16px; text-align: center; padding-top: 40px;">
+            <!-- Состояние: Гость -->
+            <div id="guestView">
+                <div style="width: 80px; height: 80px; background: var(--bg-secondary); border-radius: 50%; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 32px;">👤</div>
+                <h2>Гость</h2>
+                <p class="text-secondary" style="margin-bottom: 32px;">Войдите через Telegram, чтобы сохранять историю заказов и получать персональные скидки</p>
+                <button class="btn btn-primary" onclick="loginWithTelegram()" style="max-width: 300px; margin: 0 auto;">
+                    <span style="margin-right: 8px;">✈️</span> Войти через Telegram
+                </button>
+            </div>
+
+            <!-- Состояние: Авторизован -->
+            <div id="userView" class="hidden">
+                <img id="userAvatar" src="" alt="Avatar" style="width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 16px; object-fit: cover; border: 2px solid var(--accent);">
+                <h2 id="userName">Имя пользователя</h2>
+                <p class="text-secondary" style="margin-bottom: 32px;">ID: <span id="userId"></span></p>
+                
+                <div style="display: flex; flex-direction: column; gap: 12px; max-width: 300px; margin: 0 auto;">
+                    <button class="btn btn-outline">📦 История заказов</button>
+                    <button class="btn btn-outline">⚙️ Настройки</button>
+                    
+                    <!-- СЕКРЕТНАЯ КНОПКА АДМИНА (появится только у тебя) -->
+                    <button id="adminBtn" class="btn btn-danger hidden" onclick="openAdminPanel()" style="margin-top: 20px;">
+                        🔐 Панель администратора
+                    </button>
+                    
+                    <button class="btn btn-outline" onclick="logoutTelegram()" style="margin-top: 12px; color: var(--danger); border-color: var(--danger);">Выйти</button>
+                </div>
+            </div>
         </div>
     </main>
 
